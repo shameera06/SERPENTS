@@ -1,20 +1,4 @@
-# Java / Maven
-target/
-apache-maven-3.9.6/
-*.class
-
-# Secrets
+uploads/
+data/*.mv.db
+data/*.trace.db
 .env
-.env.*
-!.env.example
-application-local.properties
-$PROFILE.txt
-
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-# IDE
-.idea/
