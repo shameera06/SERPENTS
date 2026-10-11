@@ -2,3 +2,4 @@ uploads/
 data/*.mv.db
 data/*.trace.db
 .env
+target/
