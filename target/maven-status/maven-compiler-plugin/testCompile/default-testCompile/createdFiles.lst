@@ -1,0 +1,5 @@
+com\shareptiles\app\controller\AuthControllerTest.class
+com\shareptiles\app\model\ReptilePhotoTest.class
+com\shareptiles\app\controller\AdminOnlyActionsTest.class
+com\shareptiles\app\service\DataInitializerKingSnakeMigrationTest.class
+com\shareptiles\app\service\ReptileDeletionServiceTest.class

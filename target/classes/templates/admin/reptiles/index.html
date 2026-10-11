@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reptiles Catalog | SERPENTS Hub</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+</head>
+
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+
+        <!-- Sidebar Navigation -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+            <div class="app-brand demo">
+                <a th:href="@{/admin/dashboard}" class="app-brand-link d-flex align-items-center">
+                    <span class="app-brand-logo demo"><img th:src="@{/assets/img/serpents-logo.svg}" alt="SERPENTS" style="width: 32px; height: 32px; filter: drop-shadow(0 2px 5px rgba(16, 185, 129, 0.4));" /></span>
+                    <span class="app-brand-text demo menu-text fw-bolder ms-2 text-uppercase text-white" style="letter-spacing: 1.5px; font-family: 'Outfit', sans-serif; font-size: 1.25rem;">SERPENTS</span>
+                </a>
+            </div>
+            <ul class="menu-inner py-1">
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Main</span></li>
+                <li class="menu-item"><a th:href="@{/admin/dashboard}" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Reptile Management</span></li>
+                <li class="menu-item"><a th:href="@{/admin/species/directory}" class="menu-link"><i class="menu-icon tf-icons bx bx-spa"></i><div>Species &amp; Morphs</div></a></li>
+                <li class="menu-item active"><a th:href="@{/admin/reptiles}" class="menu-link"><i class="menu-icon tf-icons bx bx-id-card"></i><div>Reptiles Catalog</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/food-types}" class="menu-link"><i class="menu-icon tf-icons bx bx-food-menu"></i><div>Food Types</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Care &amp; Health</span></li>
+                <li class="menu-item"><a th:href="@{/admin/medical-records}" class="menu-link"><i class="menu-icon tf-icons bx bx-plus-medical"></i><div>Medical Records</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/health-alerts}" class="menu-link"><i class="menu-icon tf-icons bx bx-error-circle"></i><div>Health Alerts</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">AI Diagnostics</span></li>
+                <li class="menu-item"><a th:href="@{/admin/disease-predictions}" class="menu-link"><i class="menu-icon tf-icons bx bx-scan"></i><div>AI Disease Scans</div></a></li>
+                </ul>
+        </aside>
+
+        <div class="layout-page">
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                <div class="navbar-nav-right d-flex align-items-center w-100">
+                    <h5 class="mb-0 fw-semibold text-primary"><i class="bx bx-id-card me-2"></i> Reptiles Husbandry Catalog</h5>
+                    <div class="ms-auto">
+                        <a th:if="${session.currentUser != null && session.currentUser.admin}"
+                           th:href="@{/admin/data/export}" class="btn btn-outline-success btn-sm me-2">
+                            <i class="bx bx-export me-1"></i> Export All Records
+                        </a>
+                        <a th:href="@{/admin/reptiles/create}" class="btn btn-primary btn-sm">
+                            <i class="bx bx-plus me-1"></i> Add New Reptile
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Reptile Specimens</h5>
+                            <div>
+                                <a th:href="@{/admin/reptiles(archived=false)}" th:classappend="${!showingArchived} ? 'btn-primary' : 'btn-outline-secondary'" class="btn btn-sm">Active</a>
+                                <a th:href="@{/admin/reptiles(archived=true)}" th:classappend="${showingArchived} ? 'btn-primary' : 'btn-outline-secondary'" class="btn btn-sm">Archived</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Name</th>
+                                        <th>Species</th>
+                                        <th>Variety / Morph</th>
+                                        <th>Sex</th>
+                                        <th>Current Weight</th>
+                                        <th>Length</th>
+                                        <th>PARIVESH Certificate</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${reptiles}">
+                                        <td><span class="badge bg-label-primary" th:text="${r.reptileCode}">REP-000001</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img th:if="${r.photo != null}" th:src="@{${r.photo}}" class="rounded-circle me-2 border" style="width: 36px; height: 36px; object-fit: cover;" th:alt="${r.species.name} + ' profile photo'" />
+                                                <a th:href="@{'/admin/reptiles/' + ${r.id}}" class="fw-bold text-dark" th:text="${r.name}">Blacky</a>
+                                            </div>
+                                        </td>
+                                        <td th:text="${r.species.name}">King Snake</td>
+                                        <td><span class="badge bg-label-info" th:text="${r.displayVarietyName}">Blacky</span></td>
+                                        <td th:text="${#strings.capitalize(r.sex)}">Male</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark" th:text="${r.currentWeight + ' ' + r.weightUnit}">25.00 g</span>
+                                        </td>
+                                        <td th:text="${r.length != null ? r.length + ' ' + r.lengthUnit : 'N/A'}">35 cm</td>
+                                        <td>
+                                            <a th:if="${r.pariveshCertificatePath != null}"
+                                               th:href="@{'/admin/reptiles/' + ${r.id} + '/certificate'}"
+                                               class="btn btn-xs btn-outline-success" title="Download PARIVESH certificate">
+                                                <i class="bx bx-download"></i> PDF
+                                            </a>
+                                            <a th:unless="${r.pariveshCertificatePath != null}"
+                                               th:href="@{'/admin/reptiles/' + ${r.id} + '/edit'}"
+                                               class="btn btn-xs btn-outline-secondary" title="Attach PARIVESH certificate">
+                                                <i class="bx bx-upload"></i> Attach
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="${r.status == 'active' ? 'bg-success' : 'bg-secondary'}" th:text="${r.status}">active</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <a th:href="@{'/admin/reptiles/' + ${r.id}}" class="btn btn-xs btn-outline-primary" title="View Profile">
+                                                    <i class="bx bx-show"></i>
+                                                </a>
+                                                <a th:href="@{'/admin/reptiles/' + ${r.id} + '/pdf'}" class="btn btn-xs btn-outline-success" target="_blank" title="Print PDF (2-Month History)">
+                                                    <i class="bx bx-printer"></i>
+                                                </a>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item text-success" th:href="@{'/admin/reptiles/' + ${r.id} + '/pdf'}" target="_blank">
+                                                            <i class="bx bx-printer me-1"></i> Print PDF Report
+                                                        </a>
+                                                        <a class="dropdown-item text-primary" th:href="@{'/admin/reptiles/' + ${r.id} + '/history'}">
+                                                            <i class="bx bx-history me-1"></i> 360 Complete History
+                                                        </a>
+                                                        <a class="dropdown-item" th:href="@{'/admin/reptiles/' + ${r.id} + '/weight-history'}">
+                                                            <i class="bx bx-line-chart me-1"></i> Weight Trend Chart
+                                                        </a>
+                                                        <a class="dropdown-item" th:href="@{'/admin/reptiles/' + ${r.id}}">
+                                                            <i class="bx bx-show me-1"></i> View Profile
+                                                        </a>
+                                                        <a class="dropdown-item" th:href="@{'/admin/reptiles/' + ${r.id} + '/edit'}">
+                                                            <i class="bx bx-edit-alt me-1"></i> Edit Details
+                                                        </a>
+                                                        <form th:if="${session.currentUser != null && session.currentUser.admin}" th:action="@{'/admin/reptiles/' + ${r.id} + '/archive'}" method="post" class="d-inline">
+                                                            <button type="submit" class="dropdown-item text-warning">
+                                                                <i class="bx bx-archive me-1"></i> <span th:text="${r.archived ? 'Unarchive' : 'Archive'}">Archive</span>
+                                                            </button>
+                                                        </form>
+                                                        <form th:if="${session.currentUser != null && session.currentUser.admin}"
+                                                              th:action="@{'/admin/reptiles/' + ${r.id} + '/delete'}" method="post"
+                                                              onsubmit="return confirm('Permanently delete this snake and all of its feeding, medical, health, shedding, and other history? This cannot be undone.');">
+                                                            <button type="submit" class="dropdown-item text-danger">
+                                                                <i class="bx bx-trash me-1"></i> Delete Permanently
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+</body>
+</html>

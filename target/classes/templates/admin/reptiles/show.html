@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${reptile.name} + ' Profile | SERPENTS'">Profile</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+</head>
+
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+
+        <!-- Sidebar Navigation -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+            <div class="app-brand demo">
+                <a th:href="@{/admin/dashboard}" class="app-brand-link d-flex align-items-center">
+                    <span class="app-brand-logo demo"><img th:src="@{/assets/img/serpents-logo.svg}" alt="SERPENTS" style="width: 32px; height: 32px; filter: drop-shadow(0 2px 5px rgba(16, 185, 129, 0.4));" /></span>
+                    <span class="app-brand-text demo menu-text fw-bolder ms-2 text-uppercase text-white" style="letter-spacing: 1.5px; font-family: 'Outfit', sans-serif; font-size: 1.25rem;">SERPENTS</span>
+                </a>
+            </div>
+            <ul class="menu-inner py-1">
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Main</span></li>
+                <li class="menu-item"><a th:href="@{/admin/dashboard}" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Reptile Management</span></li>
+                <li class="menu-item"><a th:href="@{/admin/species/directory}" class="menu-link"><i class="menu-icon tf-icons bx bx-spa"></i><div>Species &amp; Morphs</div></a></li>
+                <li class="menu-item active"><a th:href="@{/admin/reptiles}" class="menu-link"><i class="menu-icon tf-icons bx bx-id-card"></i><div>Reptiles Catalog</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/food-types}" class="menu-link"><i class="menu-icon tf-icons bx bx-food-menu"></i><div>Food Types</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Care &amp; Health</span></li>
+                <li class="menu-item"><a th:href="@{/admin/medical-records}" class="menu-link"><i class="menu-icon tf-icons bx bx-plus-medical"></i><div>Medical Records</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/health-alerts}" class="menu-link"><i class="menu-icon tf-icons bx bx-error-circle"></i><div>Health Alerts</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">AI Diagnostics</span></li>
+                <li class="menu-item"><a th:href="@{/admin/disease-predictions}" class="menu-link"><i class="menu-icon tf-icons bx bx-scan"></i><div>AI Disease Scans</div></a></li>
+                </ul>
+        </aside>
+
+        <div class="layout-page">
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                <div class="navbar-nav-right d-flex align-items-center w-100">
+                    <a th:href="@{/admin/reptiles}" class="btn btn-outline-secondary btn-sm me-3">
+                        <i class="bx bx-arrow-back me-1"></i> Back to Catalog
+                    </a>
+                    <h5 class="mb-0 fw-semibold text-primary" th:text="${reptile.name} + ' (' + ${reptile.reptileCode} + ')'">Profile</h5>
+                    <div class="ms-auto d-flex gap-2">
+                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/pdf/download'}" class="btn btn-primary btn-sm">
+                            <i class="bx bx-download me-1"></i> Download PDF
+                        </a>
+                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/pdf'}" class="btn btn-success btn-sm" target="_blank">
+                            <i class="bx bx-printer me-1"></i> Print PDF (Last 2 Months)
+                        </a>
+                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/history'}" class="btn btn-info btn-sm">
+                            <i class="bx bx-history me-1"></i> 360° Complete History
+                        </a>
+                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/weight-history'}" class="btn btn-outline-primary btn-sm">
+                            <i class="bx bx-line-chart me-1"></i> Weight Trend
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="row">
+                        <div class="col-md-5 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body text-center p-4">
+                                    <div class="text-center mb-3">
+                                        <img th:if="${reptile.photo != null}" th:src="@{${reptile.photo}}" alt="Snake Specimen Photo" class="rounded shadow-sm img-fluid" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50% !important; border: 4px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.15);" />
+                                        <div th:unless="${reptile.photo != null}" class="avatar avatar-xl bg-label-primary rounded-circle mx-auto" style="width: 90px; height: 90px; line-height: 90px;">
+                                            <i class="bx bx-id-card fs-1"></i>
+                                        </div>
+                                    </div>
+                                    <h4 class="mb-1 fw-bold text-dark" th:text="${reptile.name}">Blacky</h4>
+                                    <span class="badge bg-primary px-3 py-1 mb-3" th:text="${reptile.reptileCode}">REP-000001</span>
+                                    
+                                    <div class="row text-center mt-3 g-2">
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded bg-light">
+                                                <small class="text-muted d-block">Species</small>
+                                                <strong th:text="${reptile.species.name}">King Snake</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded bg-light">
+                                                <small class="text-muted d-block">Morph / Variety</small>
+                                                <strong th:text="${reptile.displayVarietyName}">Blacky</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded bg-light">
+                                                <small class="text-muted d-block">Current Weight</small>
+                                                <strong class="text-primary" th:text="${reptile.currentWeight + ' ' + reptile.weightUnit}">25g</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded bg-light">
+                                                <small class="text-muted d-block">Sex</small>
+                                                <strong th:text="${#strings.capitalize(reptile.sex)}">Male</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-7 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0 fw-bold">Husbandry Details &amp; History Shortcuts</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <ul class="list-group list-group-flush mb-4">
+                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                            <span class="text-muted">Acquisition Source:</span>
+                                            <strong th:text="${reptile.acquisitionSource != null ? reptile.acquisitionSource : 'Sha Captive Breeding'}">Breeding</strong>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                            <span class="text-muted">Status:</span>
+                                            <span class="badge bg-success" th:text="${reptile.status}">active</span>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                            <span class="text-muted">Length:</span>
+                                            <strong th:text="${reptile.length != null ? reptile.length + ' cm' : 'N/A'}">35 cm</strong>
+                                        </li>
+                                    </ul>
+
+                                    <div class="mb-4 p-3 rounded border">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                                            <strong><i class="bx bx-file me-1"></i> PARIVESH Species Certificate</strong>
+                                            <a th:if="${reptile.pariveshCertificatePath != null}"
+                                               th:href="@{'/admin/reptiles/' + ${reptile.id} + '/certificate'}"
+                                               class="btn btn-sm btn-outline-success">
+                                                <i class="bx bx-download me-1"></i> Download PDF
+                                            </a>
+                                            <span th:unless="${reptile.pariveshCertificatePath != null}" class="small text-muted">No certificate attached yet</span>
+                                        </div>
+                                        <form th:action="@{'/admin/reptiles/' + ${reptile.id} + '/certificate'}"
+                                              method="post" enctype="multipart/form-data"
+                                              class="d-flex flex-wrap align-items-center gap-2">
+                                            <input type="file" name="certificateFile" class="form-control form-control-sm"
+                                                   accept="application/pdf,.pdf" required />
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="bx bx-upload me-1"></i> Attach PDF
+                                            </button>
+                                        </form>
+                                        <small class="form-text">PDF files only, up to 25 MB.</small>
+                                    </div>
+
+                                    <h6 class="fw-bold mb-3">Quick Actions:</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a th:href="@{'/admin/feeding-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-primary">
+                                            <i class="bx bx-restaurant me-1"></i> Log Feeding
+                                        </a>
+                                        <a th:href="@{'/admin/shedding-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-info">
+                                            <i class="bx bx-refresh me-1"></i> Log Shedding
+                                        </a>
+                                        <a th:href="@{'/admin/poop-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-warning">
+                                            <i class="bx bx-layer me-1"></i> Log Poop
+                                        </a>
+                                        <a th:href="@{'/admin/medical-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-danger">
+                                            <i class="bx bx-plus-medical me-1"></i> Log Medical
+                                        </a>
+                                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/pdf/download'}" class="btn btn-sm btn-primary">
+                                            <i class="bx bx-download me-1"></i> Download PDF
+                                        </a>
+                                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/pdf'}" target="_blank" class="btn btn-sm btn-success">
+                                            <i class="bx bx-printer me-1"></i> Print PDF
+                                        </a>
+                                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/edit'}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bx bx-edit me-1"></i> Edit Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Specimen Care Assistant Section -->
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar avatar-sm bg-white text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm">
+                                            <i class="bx bx-bot fs-4 text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-0 fw-bold">
+                                                AI Reptile Specialist: <span th:text="${reptile.name}">Snake</span>
+                                                <small class="text-white-50 ms-1 fw-normal" th:text="'(' + ${reptile.species.name} + ' &bull; ' + ${reptile.displayVarietyName} + ')'"></small>
+                                            </h6>
+                                            <small class="text-white-50">Trained on Exotic Herpetology, Husbandry Targets &amp; Specimen History</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-white text-success px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-sm">
+                                        <span class="spinner-grow spinner-grow-sm text-success" style="width: 8px; height: 8px;"></span> Live AI Active
+                                    </span>
+                                </div>
+
+                                <div class="card-body p-0">
+                                    <!-- Quick Question Chips -->
+                                    <div class="p-3 bg-light border-bottom d-flex flex-wrap gap-2 align-items-center">
+                                        <span class="small fw-bold text-muted me-2"><i class="bx bx-bulb text-warning me-1"></i> Suggested Queries:</span>
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3"
+                                                onclick="askQuickPrompt('What is the optimal temperature, humidity, and enclosure setup for this snake?')">
+                                            🌡️ Temperature &amp; Humidity Guide
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3"
+                                                onclick="askQuickPrompt('Analyze this snake\'s weight trajectory and growth health.')">
+                                            ⚖️ Weight &amp; Growth Analysis
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3"
+                                                onclick="askQuickPrompt('What diet and feeding frequency should I follow for this species?')">
+                                            🍽️ Feeding &amp; Diet Plan
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3"
+                                                onclick="askQuickPrompt('How should I care for this snake during shedding?')">
+                                            🐍 Shedding &amp; Skin Care
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3"
+                                                onclick="askQuickPrompt('Check active health alerts and veterinary notes for this specimen.')">
+                                            🚨 Health Alerts &amp; Medical Check
+                                        </button>
+                                    </div>
+
+                                    <!-- Message Thread Box -->
+                                    <div id="aiChatBox" style="height: 380px; overflow-y: auto; padding: 22px; background: #f8fafc; display: flex; flex-direction: column; gap: 16px;">
+                                        <!-- Welcome Message from AI -->
+                                        <div class="d-flex align-items-start gap-2">
+                                            <div class="avatar avatar-sm bg-label-primary rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center shadow-sm">
+                                                <i class="bx bx-bot fs-4 text-primary"></i>
+                                            </div>
+                                            <div class="p-3 rounded shadow-sm bg-white text-dark" style="max-width: 85%; border-left: 4px solid #01a453; font-size: 13.5px; line-height: 1.6;">
+                                                <div class="fw-bold text-primary mb-1">
+                                                    👋 Welcome! I am your AI Care Specialist for <span th:text="${reptile.name}">Snake</span>!
+                                                </div>
+                                                <p class="mb-1 text-muted" th:text="'I have loaded this specimen\'s full husbandry dossier: ' + ${reptile.species.name} + ' (' + ${reptile.displayVarietyName} + '), registered weight: ' + (${reptile.currentWeight != null ? reptile.currentWeight + ' ' + reptile.weightUnit : 'N/A'}) + '. Ask me anything about environmental parameters, diet schedules, shedding cycles, or veterinary guidance!'"></p>
+                                                <div class="small text-muted fst-italic">Click any suggested query above or type your question below.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chat Input Bar -->
+                                    <div class="p-3 bg-white border-top">
+                                        <form id="aiChatForm" onsubmit="sendChatMessage(event)" class="d-flex gap-2">
+                                            <input type="text" id="aiChatInput" class="form-control"
+                                                   th:placeholder="'Ask AI about ' + ${reptile.name} + '\'s diet, temperature, shedding, weight...'"
+                                                   autocomplete="off" required />
+                                            <button type="submit" id="aiChatSendBtn" class="btn btn-primary px-4 fw-semibold d-flex align-items-center gap-1 shadow-sm">
+                                                <span>Send</span> <i class="bx bx-paper-plane"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+
+<script th:inline="javascript">
+const reptileId = /*[[${reptile.id}]]*/ '1';
+const reptileName = /*[[${reptile.name}]]*/ 'Snake';
+
+function askQuickPrompt(text) {
+    const input = document.getElementById('aiChatInput');
+    input.value = text;
+    sendChatMessage(null);
+}
+
+function sendChatMessage(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('aiChatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    input.value = '';
+    appendUserBubble(msg);
+    showTypingIndicator();
+
+    const sendBtn = document.getElementById('aiChatSendBtn');
+    sendBtn.disabled = true;
+
+    fetch('/admin/reptiles/' + reptileId + '/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
+        sendBtn.disabled = false;
+        if (data && data.reply) {
+            appendAiBubble(data.reply, data.timestamp);
+        } else {
+            appendAiBubble("Sorry, I could not generate a response. Please try again.");
+        }
+    })
+    .catch(err => {
+        removeTypingIndicator();
+        sendBtn.disabled = false;
+        appendAiBubble("⚠️ Network connection error with AI Assistant. Please verify server connection.");
+    });
+}
+
+function appendUserBubble(text) {
+    const box = document.getElementById('aiChatBox');
+    const wrap = document.createElement('div');
+    wrap.className = 'd-flex align-items-start justify-content-end gap-2';
+    wrap.innerHTML = `
+        <div class="p-3 rounded shadow-sm text-white" style="max-width: 80%; background: #01a453; font-size: 13.5px; border-bottom-right-radius: 2px;">
+            <div>${escapeHtml(text)}</div>
+            <div class="small text-white-50 text-end mt-1" style="font-size: 10px;">You &bull; Just now</div>
+        </div>
+        <div class="avatar avatar-sm bg-label-dark rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center shadow-sm">
+            <i class="bx bx-user fs-4"></i>
+        </div>
+    `;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+}
+
+function appendAiBubble(markdownText, timeStr) {
+    const box = document.getElementById('aiChatBox');
+    const wrap = document.createElement('div');
+    wrap.className = 'd-flex align-items-start gap-2';
+    
+    // Convert basic markdown formatting (bold, newlines, bullets)
+    let formatted = escapeHtml(markdownText)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n\n/g, '<br/><br/>')
+        .replace(/\n/g, '<br/>')
+        .replace(/•/g, '&bull;');
+
+    const time = timeStr || (new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+
+    wrap.innerHTML = `
+        <div class="avatar avatar-sm bg-label-primary rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center shadow-sm">
+            <i class="bx bx-bot fs-4 text-primary"></i>
+        </div>
+        <div class="p-3 rounded shadow-sm bg-white text-dark" style="max-width: 85%; border-left: 4px solid #01a453; font-size: 13.5px; line-height: 1.6; border-bottom-left-radius: 2px;">
+            <div class="fw-bold text-primary mb-1">AI Care Specialist: ${escapeHtml(reptileName)}</div>
+            <div>${formatted}</div>
+            <div class="small text-muted mt-2" style="font-size: 10px;">AI Response &bull; ${time}</div>
+        </div>
+    `;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const box = document.getElementById('aiChatBox');
+    const wrap = document.createElement('div');
+    wrap.id = 'typingIndicator';
+    wrap.className = 'd-flex align-items-center gap-2';
+    wrap.innerHTML = `
+        <div class="avatar avatar-sm bg-label-primary rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center">
+            <i class="bx bx-bot fs-4 text-primary"></i>
+        </div>
+        <div class="p-2 px-3 rounded bg-white shadow-sm text-muted small d-flex align-items-center gap-2 border">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <span>Analyzing husbandry records for ${escapeHtml(reptileName)}...</span>
+        </div>
+    `;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+</script>
+</body>
+</html>
