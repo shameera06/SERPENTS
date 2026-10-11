@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Variety - SERPENTS AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/assets/css/custom.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+    <div th:replace="~{admin/layouts/master :: sidebar}"></div>
+    <div id="page-content-wrapper" class="w-100">
+        <div th:replace="~{admin/layouts/master :: navbar}"></div>
+
+        <div class="container-fluid px-4 py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/species-varieties}">Varieties</a></li>
+                    <li class="breadcrumb-item active">Edit Variety</li>
+                </ol>
+            </nav>
+
+            <h4 class="fw-bold mb-4">Edit Variety: <span class="text-primary" th:text="${variety.name}"></span></h4>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form th:action="@{/admin/species-varieties/{id}(id=${variety.id})}" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="speciesId" class="form-label fw-semibold">Species Type *</label>
+                                <select id="speciesId" name="speciesId" class="form-select" required>
+                                    <option th:each="sp : ${speciesList}" th:value="${sp.id}" th:text="${sp.name}" th:selected="${variety.species != null and variety.species.id == sp.id}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label fw-semibold">Variety / Morph Name *</label>
+                                <input type="text" id="name" name="name" class="form-control" th:value="${variety.name}" required autofocus />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="status" class="form-label fw-semibold">Status</label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="true" th:selected="${variety.status}">Active</option>
+                                <option value="false" th:selected="${!variety.status}">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-circle me-1"></i> Update Variety</button>
+                            <a th:href="@{/admin/species-varieties}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

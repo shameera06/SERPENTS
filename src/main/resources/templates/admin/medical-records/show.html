@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Record Details - SERPENTS AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/assets/css/custom.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+    <div th:replace="~{admin/layouts/master :: sidebar}"></div>
+    <div id="page-content-wrapper" class="w-100">
+        <div th:replace="~{admin/layouts/master :: navbar}"></div>
+
+        <div class="container-fluid px-4 py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/medical-records}">Medical Records</a></li>
+                    <li class="breadcrumb-item active">Record Details</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">Medical Record Details</h4>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/admin/medical-records/{id}/edit(id=${record.id})}" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Edit</a>
+                    <form th:if="${session.currentUser != null && session.currentUser.admin}" th:action="@{/admin/medical-records/{id}/delete(id=${record.id})}" method="POST" onsubmit="return confirm('Delete this medical record? This cannot be undone.');">
+                        <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Delete</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0">
+                        <span th:text="${record.reptile.name}"></span>
+                        <small class="text-muted" th:text="${' (' + record.reptile.reptileCode + ' — ' + (record.reptile.species != null ? record.reptile.species.name : '') + ')'}"></small>
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="text-muted" style="width: 240px;">Treatment Date</th>
+                                <td class="fw-semibold" th:text="${#temporals.format(record.treatmentDate, 'MMM dd, yyyy')}">Oct 07, 2026</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Symptoms / Condition</th>
+                                <td th:text="${record.symptomsOrCondition}">Lethargy and anorexia</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Prescribed Medicine</th>
+                                <td th:text="${record.medicineName != null ? record.medicineName : '—'}">Fortum</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Dosage</th>
+                                <td th:text="${record.dosage != null ? record.dosage : '—'}">20mg/kg</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Treatment Details</th>
+                                <td th:text="${record.treatmentDetails != null ? record.treatmentDetails : '—'}">Injected IM every 72 hours</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Attending Veterinarian</th>
+                                <td th:text="${record.veterinarianName != null ? record.veterinarianName : '—'}">Dr. Smith, DVM</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Veterinarian Contact</th>
+                                <td th:text="${record.veterinarianContact != null ? record.veterinarianContact : '—'}">+1 555-0199</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Prescription Document</th>
+                                <td>
+                                    <span th:if="${record.prescriptionPath != null}">
+                                        <a th:href="@{'/uploads/' + ${record.prescriptionPath}}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-file-earmark-medical me-1"></i> View Prescription Document</a>
+                                    </span>
+                                    <span th:unless="${record.prescriptionPath != null}" class="text-muted">None attached</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Internal Notes</th>
+                                <td th:text="${record.notes != null ? record.notes : '—'}">None</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Logged By</th>
+                                <td th:text="${record.createdBy != null ? record.createdBy.name : 'System Admin'}">Admin</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

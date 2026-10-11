@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="'Complete History - ' + ${reptile.name} + ' | SERPENTS'">Complete History</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+</head>
+
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+
+        <!-- Sidebar Navigation -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+            <div class="app-brand demo">
+                <a th:href="@{/admin/dashboard}" class="app-brand-link d-flex align-items-center">
+                    <span class="app-brand-logo demo"><img th:src="@{/assets/img/serpents-logo.svg}" alt="SERPENTS" style="width: 32px; height: 32px; filter: drop-shadow(0 2px 5px rgba(16, 185, 129, 0.4));" /></span>
+                    <span class="app-brand-text demo menu-text fw-bolder ms-2 text-uppercase text-white" style="letter-spacing: 1.5px; font-family: 'Outfit', sans-serif; font-size: 1.25rem;">SERPENTS</span>
+                </a>
+            </div>
+            <ul class="menu-inner py-1">
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Main</span></li>
+                <li class="menu-item"><a th:href="@{/admin/dashboard}" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Reptile Management</span></li>
+                <li class="menu-item"><a th:href="@{/admin/species/directory}" class="menu-link"><i class="menu-icon tf-icons bx bx-spa"></i><div>Species &amp; Morphs</div></a></li>
+                <li class="menu-item active"><a th:href="@{/admin/reptiles}" class="menu-link"><i class="menu-icon tf-icons bx bx-id-card"></i><div>Reptiles Catalog</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/food-types}" class="menu-link"><i class="menu-icon tf-icons bx bx-food-menu"></i><div>Food Types</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Care &amp; Health</span></li>
+                <li class="menu-item"><a th:href="@{/admin/medical-records}" class="menu-link"><i class="menu-icon tf-icons bx bx-plus-medical"></i><div>Medical Records</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/health-alerts}" class="menu-link"><i class="menu-icon tf-icons bx bx-error-circle"></i><div>Health Alerts</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">AI Diagnostics</span></li>
+                <li class="menu-item"><a th:href="@{/admin/disease-predictions}" class="menu-link"><i class="menu-icon tf-icons bx bx-scan"></i><div>AI Disease Scans</div></a></li>
+                </ul>
+        </aside>
+
+        <div class="layout-page">
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                <div class="navbar-nav-right d-flex align-items-center w-100">
+                    <a th:href="@{/admin/reptiles}" class="btn btn-outline-secondary btn-sm me-3">
+                        <i class="bx bx-arrow-back me-1"></i> Back to Catalog
+                    </a>
+                    <h5 class="mb-0 fw-semibold text-primary" th:text="'360° Complete History: ' + ${reptile.name} + ' (' + ${reptile.reptileCode} + ')'">History</h5>
+                    <div class="ms-auto">
+                        <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/history/pdf'}" class="btn btn-danger btn-sm" target="_blank">
+                            <i class="bx bxs-file-pdf me-1"></i> Export PDF Report
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+
+                    <!-- Profile Header Summary -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div>
+                                    <h4 class="mb-1 fw-bold text-dark" th:text="${reptile.name}">Blacky</h4>
+                                    <p class="text-muted mb-0">
+                                        <span class="badge bg-label-primary me-2" th:text="${reptile.reptileCode}">REP-000001</span>
+                                        <strong th:text="${reptile.species.name}">King Snake</strong> &bull;
+                                        <span th:text="${reptile.displayVarietyName}">Blacky</span> &bull;
+                                        <span th:text="${#strings.capitalize(reptile.sex)}">Male</span> &bull;
+                                        Current Weight: <strong class="text-primary" th:text="${reptile.currentWeight + ' ' + reptile.weightUnit}">25g</strong>
+                                    </p>
+                                </div>
+                                <div class="mt-3 mt-md-0 d-flex gap-2">
+                                    <div class="text-center px-3 border-end">
+                                        <span class="d-block text-muted small">Feedings</span>
+                                        <strong class="fs-5" th:text="${counts.totalFeedingRecords}">3</strong>
+                                    </div>
+                                    <div class="text-center px-3 border-end">
+                                        <span class="d-block text-muted small">Sheds</span>
+                                        <strong class="fs-5" th:text="${counts.totalSheddingRecords}">1</strong>
+                                    </div>
+                                    <div class="text-center px-3 border-end">
+                                        <span class="d-block text-muted small">Poops</span>
+                                        <strong class="fs-5" th:text="${counts.totalPoopRecords}">1</strong>
+                                    </div>
+                                    <div class="text-center px-3">
+                                        <span class="d-block text-muted small">Alerts</span>
+                                        <strong class="fs-5 text-danger" th:text="${counts.activeHealthAlerts}">0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Tabs -->
+                    <div class="nav-align-top mb-4">
+                        <ul class="nav nav-tabs nav-fill" role="tablist">
+                            <li class="nav-item">
+                                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-feeding">
+                                    <i class="bx bx-restaurant me-1"></i> Feeding &amp; Weight History
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-shedding">
+                                    <i class="bx bx-refresh me-1"></i> Shedding Records
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-poop">
+                                    <i class="bx bx-layer me-1"></i> Poop / Defecation
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-medical">
+                                    <i class="bx bx-plus-medical me-1"></i> Medical History
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-alerts">
+                                    <i class="bx bx-error-circle me-1"></i> Health Alerts
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content card shadow-sm p-4">
+                            <!-- Tab 1: Feeding -->
+                            <div class="tab-pane fade show active" id="navs-feeding" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 fw-semibold">Chronological Feeding Logs &amp; Effective Weight Tracking</h6>
+                                    <a th:href="@{'/admin/feeding-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-plus me-1"></i> Add Feeding Log
+                                    </a>
+                                </div>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Feeding Date</th>
+                                                <th>Pre-Weight</th>
+                                                <th>Post-Weight</th>
+                                                <th>Net Change</th>
+                                                <th>Trend</th>
+                                                <th>Alert Triggered?</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="f : ${feedingRecords}">
+                                                <td th:text="${#temporals.format(f.feedingDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+                                                <td th:text="${f.weightBefore + ' g'}">20g</td>
+                                                <td th:text="${(f.weightAfterDefecation != null ? f.weightAfterDefecation : f.weightAfter) + ' g'}">30g</td>
+                                                <td>
+                                                    <span th:if="${f.weightChange != null}"
+                                                          th:class="${f.weightChange > 0 ? 'text-success fw-bold' : (f.weightChange < 0 ? 'text-danger fw-bold' : 'text-muted')}"
+                                                          th:text="${(f.weightChange > 0 ? '+' : '') + f.weightChange + ' g'}">+10g</span>
+                                                    <span th:unless="${f.weightChange != null}" class="text-muted">N/A</span>
+                                                </td>
+                                                <td>
+                                                    <span th:if="${f.weightTrend == 'gain'}" class="badge bg-success">Gain</span>
+                                                    <span th:if="${f.weightTrend == 'no_gain'}" class="badge bg-warning">No Gain</span>
+                                                    <span th:if="${f.weightTrend == 'loss'}" class="badge bg-danger">Loss</span>
+                                                    <span th:if="${f.weightTrend == null}" class="badge bg-secondary">First Record</span>
+                                                </td>
+                                                <td>
+                                                    <span th:if="${f.weightAlertTriggered}" class="badge bg-danger">⚠️ Concern Triggered</span>
+                                                    <span th:unless="${f.weightAlertTriggered}" class="badge bg-label-success">Normal</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2: Shedding -->
+                            <div class="tab-pane fade" id="navs-shedding" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 fw-semibold">Ecdysis / Skin Shedding Events</h6>
+                                    <a th:href="@{'/admin/shedding-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-plus me-1"></i> Log Shed
+                                    </a>
+                                </div>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Shed Date</th>
+                                                <th>Status</th>
+                                                <th>Observations / Health Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="s : ${sheddingRecords}">
+                                                <td th:text="${s.sheddingDate}">2026-09-20</td>
+                                                <td>
+                                                    <span class="badge" th:classappend="${s.status == 'complete' ? 'bg-success' : 'bg-warning'}" th:text="${s.status}">complete</span>
+                                                </td>
+                                                <td th:text="${s.observations != null ? s.observations : s.notes}">Clean shed</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tab 3: Poop -->
+                            <div class="tab-pane fade" id="navs-poop" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 fw-semibold">Defecation &amp; Digestive Records</h6>
+                                    <a th:href="@{'/admin/poop-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-plus me-1"></i> Log Poop
+                                    </a>
+                                </div>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Date &amp; Time</th>
+                                                <th>Stool Consistency</th>
+                                                <th>Urates Status</th>
+                                                <th>Post-Defecation Weight</th>
+                                                <th>Observations</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="p : ${poopRecords}">
+                                                <td th:text="${#temporals.format(p.poopDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+                                                <td><span class="badge bg-label-info" th:text="${p.consistency}">normal</span></td>
+                                                <td><span class="badge bg-label-primary" th:text="${p.uratesStatus}">normal_white</span></td>
+                                                <td th:text="${p.weightAfterPoop != null ? p.weightAfterPoop + ' g' : 'N/A'}">25g</td>
+                                                <td th:text="${p.observations}">Normal stool</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tab 4: Medical -->
+                            <div class="tab-pane fade" id="navs-medical" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 fw-semibold">Veterinary Diagnoses &amp; Prescriptions</h6>
+                                    <a th:href="@{'/admin/medical-records/create?reptileId=' + ${reptile.id}}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-plus me-1"></i> Log Medical Record
+                                    </a>
+                                </div>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Treatment Date</th>
+                                                <th>Symptoms / Condition</th>
+                                                <th>Medicine &amp; Dosage</th>
+                                                <th>Veterinarian</th>
+                                                <th>Prescription</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="m : ${medicalRecords}">
+                                                <td th:text="${m.treatmentDate}">Date</td>
+                                                <td><strong th:text="${m.symptomsOrCondition}">Condition</strong></td>
+                                                <td th:text="${m.medicineName != null ? m.medicineName + ' (' + m.dosage + ')' : 'None'}">Electrolytes</td>
+                                                <td th:text="${m.veterinarianName}">Dr. Jenkins</td>
+                                                <td>
+                                                    <span th:if="${m.prescriptionPath != null}" class="badge bg-success">Uploaded</span>
+                                                    <span th:unless="${m.prescriptionPath != null}" class="text-muted">None</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tab 5: Health Alerts -->
+                            <div class="tab-pane fade" id="navs-alerts" role="tabpanel">
+                                <h6 class="mb-3 fw-semibold">Triggered Health Alerts &amp; Failure-to-Thrive Concerns</h6>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Triggered Date</th>
+                                                <th>Title</th>
+                                                <th>Severity</th>
+                                                <th>Status</th>
+                                                <th>Message</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="a : ${healthAlerts}">
+                                                <td th:text="${#temporals.format(a.triggeredAt, 'yyyy-MM-dd HH:mm')}">Date</td>
+                                                <td><strong th:text="${a.title}">Alert</strong></td>
+                                                <td><span class="badge" th:classappend="${a.severity == 'critical' ? 'bg-danger' : 'bg-warning'}" th:text="${a.severity}">warning</span></td>
+                                                <td><span class="badge" th:classappend="${a.status == 'active' ? 'bg-danger' : 'bg-success'}" th:text="${a.status}">active</span></td>
+                                                <td class="text-wrap" th:text="${a.message}">Message</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+</body>
+</html>

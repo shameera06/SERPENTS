@@ -1,0 +1,512 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${reptile.name} + ' (' + ${reptile.reptileCode} + ') - Clinical Husbandry History (Last 2 Months)'">Reptile Clinical Report</title>
+    
+    <!-- Bootstrap CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #212529;
+            font-size: 13.5px;
+        }
+
+        .report-page {
+            max-width: 960px;
+            margin: 24px auto;
+            background: #ffffff;
+            padding: 36px 44px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-brand {
+            border-bottom: 2px solid #2b4c7e;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .specimen-photo {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .metric-card {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-card h3 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .metric-card small {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 1.5px solid #cbd5e1;
+            padding-bottom: 6px;
+            margin-top: 24px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: #3b82f6;
+        }
+
+        .table-custom th {
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 8px 10px;
+        }
+
+        .table-custom td {
+            padding: 8px 10px;
+            vertical-align: middle;
+            font-size: 12.5px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .badge-trend-gain {
+            background-color: #dcfce7;
+            color: #15803d;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-trend-loss {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-trend-no_gain {
+            background-color: #fef3c7;
+            color: #b45309;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .report-footer {
+            margin-top: 36px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* Print-specific layout rules */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                font-size: 11pt;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .report-page {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            tr, .metric-card {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+</head>
+<body>
+
+<!-- Control Action Bar (Hidden on Print) -->
+<div class="no-print bg-dark text-white py-2 px-4 shadow-sm sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <span class="fw-bold fs-6">SERPENTS CLINICAL HUSBANDRY REPORT</span>
+            <span class="text-white-50 ms-2" th:text="'— ' + ${reptile.name} + ' (' + ${reptile.reptileCode} + ')'"></span>
+        </div>
+            <a th:href="@{'/admin/reptiles/' + ${reptile.id} + '/pdf/download'}" class="btn btn-primary btn-sm px-3 fw-semibold" id="downloadPdfBtn">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF
+            </a>
+            <button onclick="window.print()" class="btn btn-success btn-sm px-3 fw-semibold">
+                <i class="bi bi-printer me-1"></i> Print to PDF / Paper
+            </button>
+            <a th:href="@{'/admin/reptiles/' + ${reptile.id}}" class="btn btn-outline-light btn-sm px-3">
+                <i class="bi bi-arrow-left me-1"></i> Back to Specimen Profile
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="report-page" id="report-content">
+    <!-- Header -->
+    <div class="header-brand d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold mb-1" style="color: #1e3a8a; letter-spacing: -0.5px;">SERPENTS AI &amp; CLINICAL REPORT</h3>
+            <p class="text-muted mb-0 small">Automated Exotic Husbandry, Growth Trend &amp; Dermatological Diagnostic Dossier</p>
+        </div>
+        <div class="text-end">
+            <div class="badge bg-primary px-3 py-2 fs-6 mb-1" th:text="${reptile.reptileCode}">REP-000010</div>
+            <div class="text-muted small" th:text="'Report Period: Last 2 Months (' + ${#temporals.format(twoMonthsAgo, 'MMM dd, yyyy')} + ' - ' + ${#temporals.format(#temporals.createNow(), 'MMM dd, yyyy')} + ')'">Period</div>
+        </div>
+    </div>
+
+    <!-- Specimen Profile Card -->
+    <div class="card border-0 bg-light p-3 rounded mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-auto text-center">
+                <img th:if="${reptile.photo != null}" th:src="@{${reptile.photo}}" alt="Snake Photo" class="specimen-photo" />
+                <div th:unless="${reptile.photo != null}" class="specimen-photo d-flex align-items-center justify-content-center bg-secondary text-white fs-1">
+                    <i class="bi bi-shield-shaded"></i>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${reptile.name}">Royal</h4>
+                        <span class="text-muted fw-semibold" th:text="${reptile.species != null ? reptile.species.name : 'Unknown Species'} + ' — ' + ${reptile.displayVarietyName}">Python Snake — Royal</span>
+                    </div>
+                    <span class="badge bg-success px-3 py-1" th:text="${#strings.toUpperCase(reptile.status)}">ACTIVE</span>
+                </div>
+                
+                <div class="row g-2 mt-1">
+                    <div class="col-3">
+                        <small class="text-muted d-block">Sex</small>
+                        <strong th:text="${#strings.capitalize(reptile.sex)}">Female</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block">Current Weight</small>
+                        <strong class="text-primary" th:text="${reptile.currentWeight} + ' ' + ${reptile.weightUnit}">502.00 g</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block">Total Length</small>
+                        <strong th:text="${reptile.length != null ? reptile.length + ' ' + reptile.lengthUnit : 'N/A'}">105.00 cm</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block">Source</small>
+                        <strong th:text="${reptile.acquisitionSource != null ? reptile.acquisitionSource : 'Sha Captive Breeding'}">Breeding</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block">Birth Date</small>
+                        <span th:text="${reptile.dateOfBirth != null ? #temporals.format(reptile.dateOfBirth, 'MMM dd, yyyy') : 'Unknown'}">Oct 2024</span>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block">Acquisition Date</small>
+                        <span th:text="${reptile.acquisitionDate != null ? #temporals.format(reptile.acquisitionDate, 'MMM dd, yyyy') : 'Unknown'}">Apr 2026</span>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Clinical Notes</small>
+                        <span th:text="${reptile.notes != null && !reptile.notes.isBlank() ? reptile.notes : 'Healthy specimen maintained under optimal thermal gradient.'}">Notes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2-Month Summary KPI Cards -->
+    <div class="row g-2 mb-4">
+        <div class="col-3">
+            <div class="metric-card">
+                <h3 th:text="${totalFeedings}">3</h3>
+                <small>Feedings (2 Mo)</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="metric-card">
+                <h3 th:text="${totalPoops}">3</h3>
+                <small>Defecations (2 Mo)</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="metric-card">
+                <h3 th:text="${totalSheds}">3</h3>
+                <small>Shed Cycles (2 Mo)</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="metric-card">
+                <h3 th:text="${#lists.size(medicals)}">0</h3>
+                <small>Medical Logs (2 Mo)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Detailed 2-Month Feeding & Weight History -->
+    <div class="section-title">
+        <i class="bi bi-egg-fried"></i> 1. Feeding &amp; Weight Growth History (Last 2 Months)
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Diet Item</th>
+                    <th>Quantity</th>
+                    <th>Weight Pre</th>
+                    <th>Weight Post</th>
+                    <th>Post-Poop Wt</th>
+                    <th>Weight Delta</th>
+                    <th>Growth Trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(feedings)}">
+                    <td colspan="8" class="text-center text-muted py-3">No feeding events recorded in the last 2 months.</td>
+                </tr>
+                <tr th:each="f : ${feedings}">
+                    <td class="fw-semibold" th:text="${#temporals.format(f.feedingDate, 'MMM dd, yyyy HH:mm')}">Date</td>
+                    <td th:text="${f.foodType != null ? f.foodType.displayName : 'Rodent'}">Fuzzy Mouse</td>
+                    <td th:text="${f.quantity} + ' ' + ${f.quantityUnit}">1 piece</td>
+                    <td th:text="${f.weightBefore} + 'g'">480.0g</td>
+                    <td th:text="${f.weightAfter} + 'g'">492.0g</td>
+                    <td th:text="${f.weightAfterDefecation != null ? f.weightAfterDefecation + 'g' : '—'}">490.0g</td>
+                    <td>
+                        <span th:if="${f.weightChange != null}"
+                              th:class="${f.weightChange.doubleValue() >= 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}"
+                              th:text="${(f.weightChange.doubleValue() >= 0 ? '+' : '') + f.weightChange + 'g'}">+10.0g</span>
+                        <span th:unless="${f.weightChange != null}" class="text-muted">—</span>
+                    </td>
+                    <td>
+                        <span th:if="${f.weightTrend == 'gain'}" class="badge-trend-gain">Weight Gain</span>
+                        <span th:if="${f.weightTrend == 'loss'}" class="badge-trend-loss">Weight Loss</span>
+                        <span th:if="${f.weightTrend == 'no_gain'}" class="badge-trend-no_gain">Plateau / Zero</span>
+                        <span th:if="${f.weightTrend == null || f.weightTrend == 'unknown'}" class="text-muted">—</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 2: Detailed 2-Month Defecation & Urates Hydration Log -->
+    <div class="section-title">
+        <i class="bi bi-moisture"></i> 2. Defecation &amp; Urates Hydration Log (Last 2 Months)
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Stool Consistency</th>
+                    <th>Urates Hydration Status</th>
+                    <th>Post-Poop Weight</th>
+                    <th>Clinical Observations &amp; Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(poops)}">
+                    <td colspan="5" class="text-center text-muted py-3">No defecation records logged in the last 2 months.</td>
+                </tr>
+                <tr th:each="p : ${poops}">
+                    <td class="fw-semibold" th:text="${#temporals.format(p.poopDate, 'MMM dd, yyyy HH:mm')}">Date</td>
+                    <td>
+                        <span th:if="${p.consistency == 'normal'}" class="badge bg-light text-dark border">Normal / Formed</span>
+                        <span th:if="${p.consistency == 'loose'}" class="badge bg-danger text-white">Loose / Diarrhea</span>
+                        <span th:if="${p.consistency == 'hard'}" class="badge bg-warning text-dark">Hard / Constipated</span>
+                        <span th:if="${p.consistency != 'normal' && p.consistency != 'loose' && p.consistency != 'hard'}" th:text="${p.consistency}">Normal</span>
+                    </td>
+                    <td>
+                        <span th:if="${p.uratesStatus == 'normal_white'}" class="text-success fw-semibold"><i class="bi bi-check-circle me-1"></i> Chalky White (Hydrated)</span>
+                        <span th:if="${p.uratesStatus == 'yellowish'}" class="text-warning fw-semibold"><i class="bi bi-exclamation-triangle me-1"></i> Yellowish (Mild Dehydration)</span>
+                        <span th:if="${p.uratesStatus == 'greenish'}" class="text-danger fw-semibold"><i class="bi bi-x-circle me-1"></i> Greenish (Dehydration/Infection)</span>
+                        <span th:if="${p.uratesStatus == 'none'}" class="text-muted">No Urates Passed</span>
+                    </td>
+                    <td th:text="${p.weightAfterPoop != null ? p.weightAfterPoop + 'g' : '—'}">502.0g</td>
+                    <td th:text="${p.observations != null && !p.observations.isBlank() ? p.observations : (p.notes != null ? p.notes : 'Standard clean defecation event.')}">Observations</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 3: Detailed 2-Month Shedding (Ecdysis) Log -->
+    <div class="section-title">
+        <i class="bi bi-arrow-repeat"></i> 3. Shedding (Ecdysis) Quality History (Last 2 Months)
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Shed Date</th>
+                    <th>Ecdysis Status</th>
+                    <th>Clinical Observations &amp; Skin Integrity Notes</th>
+                    <th>Logged By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(sheds)}">
+                    <td colspan="4" class="text-center text-muted py-3">No shedding cycles recorded in the last 2 months.</td>
+                </tr>
+                <tr th:each="s : ${sheds}">
+                    <td class="fw-semibold" th:text="${#temporals.format(s.sheddingDate, 'MMM dd, yyyy')}">Date</td>
+                    <td>
+                        <span th:if="${s.status == 'complete'}" class="badge bg-success text-white">Complete (1-Piece)</span>
+                        <span th:if="${s.status == 'incomplete'}" class="badge bg-warning text-dark">Incomplete (Pieces)</span>
+                        <span th:if="${s.status == 'stuck'}" class="badge bg-danger text-white">Stuck / Retained Caps</span>
+                    </td>
+                    <td th:text="${s.observations != null && !s.observations.isBlank() ? s.observations : (s.notes != null ? s.notes : 'Clean shed with intact clear eyecaps.')}">Clean shed</td>
+                    <td class="text-muted" th:text="${s.createdBy != null ? s.createdBy.name : 'System Admin'}">Admin</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 4: Veterinary Treatments & Medical Logs -->
+    <div class="section-title">
+        <i class="bi bi-hospital"></i> 4. Veterinary &amp; Medical History (Last 2 Months)
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Treatment Date</th>
+                    <th>Symptoms / Condition</th>
+                    <th>Prescribed Medication</th>
+                    <th>Dosage</th>
+                    <th>Attending Veterinarian</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(medicals)}">
+                    <td colspan="5" class="text-center text-muted py-3">No veterinary treatments or illnesses recorded in the last 2 months. (Clean Medical Bill)</td>
+                </tr>
+                <tr th:each="m : ${medicals}">
+                    <td class="fw-semibold" th:text="${#temporals.format(m.treatmentDate, 'MMM dd, yyyy')}">Date</td>
+                    <td th:text="${m.symptomsOrCondition}">Condition</td>
+                    <td th:text="${m.medicineName != null ? m.medicineName : '—'}">Medicine</td>
+                    <td th:text="${m.dosage != null ? m.dosage : '—'}">Dosage</td>
+                    <td th:text="${m.veterinarianName != null ? m.veterinarianName : 'Staff Veterinarian'}">Dr. Smith</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 5: Active Clinical Health Alerts -->
+    <div class="section-title" th:if="${!#lists.isEmpty(alerts)}">
+        <i class="bi bi-shield-exclamation text-warning"></i> 5. Active Health Alerts
+    </div>
+    <div class="table-responsive" th:if="${!#lists.isEmpty(alerts)}">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Trigger Date</th>
+                    <th>Alert Type</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Evidence &amp; Clinical Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="a : ${alerts}">
+                    <td th:text="${#temporals.format(a.triggeredAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                    <td th:text="${a.alertType}">weight_loss</td>
+                    <td>
+                        <span th:if="${a.severity == 'critical'}" class="badge bg-danger text-white">Critical</span>
+                        <span th:if="${a.severity == 'warning'}" class="badge bg-warning text-dark">Warning</span>
+                        <span th:if="${a.severity == 'info'}" class="badge bg-info text-white">Info</span>
+                    </td>
+                    <td>
+                        <span th:if="${a.status == 'open'}" class="badge bg-danger">OPEN</span>
+                        <span th:if="${a.status == 'resolved'}" class="badge bg-success">RESOLVED</span>
+                    </td>
+                    <td th:text="${a.evidenceSummary}">Evidence</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Sign-Off -->
+    <div class="report-footer">
+        <div class="row align-items-end">
+            <div class="col-8">
+                <p class="mb-1"><strong>SERPENTS Diagnostic Husbandry System</strong> — Official Specimen Health Dossier</p>
+                <p class="mb-0">This document is electronically verified from the central clinical registry. Printed on: <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM dd, yyyy HH:mm:ss')}">Timestamp</span></p>
+            </div>
+            <div class="col-4 text-end">
+                <div style="border-top: 1px dashed #94a3b8; width: 180px; margin-left: auto; padding-top: 4px;">
+                    <small>Authorized Clinical Officer</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script th:inline="javascript">
+function downloadAsPDF() {
+    const btn = document.getElementById('downloadPdfBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Generating PDF...';
+    btn.disabled = true;
+
+    const element = document.getElementById('report-content');
+    const reptCode = /*[[${reptile.reptileCode}]]*/ 'REP';
+    const reptName = /*[[${reptile.name}]]*/ 'Specimen';
+    const filename = reptCode + '_' + reptName + '_Clinical_History.pdf';
+
+    const opt = {
+        margin:       [8, 8, 8, 8],
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(function() {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }).catch(function(err) {
+        console.error(err);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        window.print();
+    });
+}
+</script>
+</body>
+</html>

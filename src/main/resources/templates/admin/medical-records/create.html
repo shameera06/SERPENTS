@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Medical Record | SERPENTS Hub</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/fonts/boxicons.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/core.css}" />
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/theme-default.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/demo.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/admin-custom.css}" />
+</head>
+
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+
+        <!-- Sidebar Navigation -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+            <div class="app-brand demo">
+                <a th:href="@{/admin/dashboard}" class="app-brand-link d-flex align-items-center">
+                    <span class="app-brand-logo demo"><img th:src="@{/assets/img/serpents-logo.svg}" alt="SERPENTS" style="width: 32px; height: 32px; filter: drop-shadow(0 2px 5px rgba(16, 185, 129, 0.4));" /></span>
+                    <span class="app-brand-text demo menu-text fw-bolder ms-2 text-uppercase text-white" style="letter-spacing: 1.5px; font-family: 'Outfit', sans-serif; font-size: 1.25rem;">SERPENTS</span>
+                </a>
+            </div>
+            <ul class="menu-inner py-1">
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Main</span></li>
+                <li class="menu-item"><a th:href="@{/admin/dashboard}" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Reptile Management</span></li>
+                <li class="menu-item"><a th:href="@{/admin/species/directory}" class="menu-link"><i class="menu-icon tf-icons bx bx-spa"></i><div>Species &amp; Morphs</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/reptiles}" class="menu-link"><i class="menu-icon tf-icons bx bx-id-card"></i><div>Reptiles Catalog</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/food-types}" class="menu-link"><i class="menu-icon tf-icons bx bx-food-menu"></i><div>Food Types</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Care &amp; Health</span></li>
+                <li class="menu-item active"><a th:href="@{/admin/medical-records}" class="menu-link"><i class="menu-icon tf-icons bx bx-plus-medical"></i><div>Medical Records</div></a></li>
+                <li class="menu-item"><a th:href="@{/admin/health-alerts}" class="menu-link"><i class="menu-icon tf-icons bx bx-error-circle"></i><div>Health Alerts</div></a></li>
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">AI Diagnostics</span></li>
+                <li class="menu-item"><a th:href="@{/admin/disease-predictions}" class="menu-link"><i class="menu-icon tf-icons bx bx-scan"></i><div>AI Disease Scans</div></a></li>
+                </ul>
+        </aside>
+
+        <div class="layout-page">
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                <div class="navbar-nav-right d-flex align-items-center w-100">
+                    <a th:href="${selectedReptileId != null ? '/admin/reptiles/' + selectedReptileId : '/admin/reptiles'}" class="btn btn-outline-secondary btn-sm me-3">
+                        <i class="bx bx-arrow-back me-1"></i> Back to Specimen Profile
+                    </a>
+                    <h5 class="mb-0 fw-semibold text-primary"><i class="bx bx-plus-circle me-2"></i> Log Medical Exam or Treatment</h5>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="row justify-content-center">
+                        <div class="col-md-7">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="text-white mb-0">Record Clinical Checkup / Treatment</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <form th:action="@{/admin/medical-records}" method="post" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Select Reptile *</label>
+                                            <select name="reptileId" class="form-select" required>
+                                                <option value="">-- Choose Specimen --</option>
+                                                <option th:each="r : ${reptiles}" th:value="${r.id}"
+                                                        th:selected="${selectedReptileId != null && selectedReptileId == r.id}"
+                                                        th:text="${r.name + ' (' + r.reptileCode + ')'}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Treatment Date *</label>
+                                            <input type="date" name="treatmentDate" class="form-control" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Diagnosis / Condition Symptoms *</label>
+                                            <input type="text" name="symptomsOrCondition" class="form-control" placeholder="e.g. Mild Scale Rot, Respiratory Wheeze, Wellness Check" required />
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Prescribed Medicine</label>
+                                                <input type="text" name="medicineName" class="form-control" placeholder="e.g. Baytril, Silvadene cream" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Dosage / Frequency</label>
+                                                <input type="text" name="dosage" class="form-control" placeholder="e.g. 0.05ml IM every 48h" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Veterinarian Name</label>
+                                                <input type="text" name="veterinarianName" class="form-control" placeholder="Dr. Jane Doe, DVM" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Vet Contact / Clinic</label>
+                                                <input type="text" name="veterinarianContact" class="form-control" placeholder="+1 555-0199" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Prescription File (PDF or Image)</label>
+                                            <input type="file" name="prescriptionFile" class="form-control" />
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label fw-semibold">Detailed Treatment Instructions</label>
+                                            <textarea name="treatmentDetails" class="form-control" rows="2" placeholder="Nebulization protocol, warm soak schedule, quarantine setup..."></textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                                <i class="bx bx-save me-1"></i> Save Medical Record
+                                            </button>
+                                            <a th:href="${selectedReptileId != null ? '/admin/reptiles/' + selectedReptileId : '/admin/reptiles'}" class="btn btn-outline-secondary">
+                                                Cancel
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('input[type="date"]').value = new Date().toISOString().split('T')[0];
+</script>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+</body>
+</html>
